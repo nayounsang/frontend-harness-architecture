@@ -1,0 +1,20 @@
+export type CocktailItem = {
+    id: string;
+    name: string;
+    baseSpirit: string;
+    style: string;
+    abvFeel: string;
+    servingGlass: string;
+    highlightIngredients: string;
+    priceKrw: number;
+    currencyLabel: string;
+    servingUnit: string;
+    soldOut: boolean;
+    summary: string;
+    mixersNote: string;
+    temperatureNote: string;
+    ingredientList?: string[];
+    abvPercent?: string;
+    pairingTags?: string[];
+    storeComment?: string;
+};

@@ -1,0 +1,21 @@
+export type WhiskyItem = {
+    id: string;
+    name: string;
+    category: string;
+    regionStyle: string;
+    agingCask: string;
+    abv: string;
+    servingUnit: string;
+    priceKrw: number;
+    currencyLabel: string;
+    soldOut: boolean;
+    regionBlurb: string;
+    tastingNose: string;
+    tastingPalate: string;
+    tastingFinish: string;
+    drinkingStyles?: string;
+    serveTempNote?: string;
+    distilleryNote?: string;
+    caskDetail?: string;
+    storeComment?: string;
+};
