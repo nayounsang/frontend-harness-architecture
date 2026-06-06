@@ -1,17 +1,24 @@
-# 프로젝트 목적
+# layer-harness
 
-- [docs.md](docs.md)의 구현과 예시 POC
+[docs.md](docs.md)의 모듈 레이어 구현과 바 메뉴 POC 예제를 담은 pnpm 모노레포입니다.
 
-# 구조
+## 구조
 
-## layer
+```
+package/
+  layer/                    @layer-harness/layer — createModuleComponent, UIModeModule, ConditionModeModule
+  eslint-plugin-module/     @layer-harness/eslint-plugin-module — 모듈 규약 ESLint 규칙
 
-- 모듈 구조 구현체 (`createModuleComponent` 등, [`src/layer/layer.tsx`](src/layer/layer.tsx))
+example/
+  bar-menu/                 @layer-harness/example-bar-menu — Vite 앱 (domain + spec)
+```
 
-## domain
+## 스크립트
 
-- `layer`를 사용한 관심사별 컴포넌트 예시를 둘 위치
-
-## spec
-
-- 바 메뉴 서비스 **비즈니스 요구사항** 문서를 한곳에 모아 둠
+```bash
+pnpm install
+pnpm dev          # example/bar-menu 개발 서버
+pnpm lint         # 전 패키지 lint
+pnpm typecheck    # 전 패키지 타입 검사
+pnpm build        # 전 패키지 빌드
+```
