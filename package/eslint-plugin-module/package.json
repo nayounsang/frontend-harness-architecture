@@ -3,12 +3,24 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./index.js"
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "prepare": "tsc"
   },
   "peerDependencies": {
     "eslint": "^9.0.0"
   },
   "dependencies": {
     "@typescript-eslint/utils": "^8.59.4"
+  },
+  "devDependencies": {
+    "@types/eslint": "^9.6.1",
+    "typescript": "^5.7.0"
   }
 }

@@ -1,14 +1,17 @@
 import { ESLintUtils } from "@typescript-eslint/utils";
+import type { TSESTree } from "@typescript-eslint/utils";
 import {
     getGlobalStateHookSet,
     getHookNameFromCall,
     globalStateHooksSchema,
     isGlobalStateHook,
+    type HookPolicyOptions,
 } from "../utils/hook-policy.js";
 import {
     getMemberKeyName,
     getModuleComponentContext,
     isMemberOfClass,
+    isUsePrefixHookName,
     walkTree,
 } from "../utils/module-context.js";
 
@@ -17,22 +20,23 @@ const createRule = ESLintUtils.RuleCreator(
         `https://github.com/untitle/jsproject/blob/main/front-harness/docs.md#module-${name}`,
 );
 
-/** @type {import('../utils/hook-policy.js').HookPolicyOptions} */
-const defaultHookPolicyOptions = {
+type ClassMember = TSESTree.MethodDefinition | TSESTree.PropertyDefinition;
+
+const defaultHookPolicyOptions: HookPolicyOptions = {
     globalStateHooks: ["useSession"],
 };
 
-export const useHooksNoGlobalHooksRule = createRule({
-    name: "use-hooks-no-global-hooks",
+export const useGlobalHooksOnlyRule = createRule({
+    name: "use-global-hooks-only",
     meta: {
         type: "problem",
         docs: {
             description:
-                "Disallow global-state hooks (context / configured store hooks) inside useHooks() on module components.",
+                "Allow only global-state hooks (context / configured store hooks) inside useGlobal() on module components.",
         },
         messages: {
-            globalHook:
-                "`{{name}}` is not allowed in `useHooks`. Use `useGlobal` for global-state hooks (e.g. context).",
+            disallowedHook:
+                "`{{name}}` is not allowed in `useGlobal`. Use global-state hooks only (e.g. context). Move other hooks to `useHooks`.",
         },
         schema: globalStateHooksSchema,
     },
@@ -44,12 +48,9 @@ export const useHooksNoGlobalHooksRule = createRule({
         const { moduleClass } = moduleContext;
         const globalStateHooks = getGlobalStateHookSet(options);
 
-        /**
-         * @param {import('@typescript-eslint/types').TSESTree.MethodDefinition | import('@typescript-eslint/types').TSESTree.PropertyDefinition} member
-         */
-        function checkUseHooksMember(member) {
+        function checkUseGlobalMember(member: ClassMember) {
             if (!isMemberOfClass(member, moduleClass)) return;
-            if (getMemberKeyName(member) !== "useHooks") return;
+            if (getMemberKeyName(member) !== "useGlobal") return;
 
             const value = member.value;
             if (!value) return;
@@ -57,20 +58,20 @@ export const useHooksNoGlobalHooksRule = createRule({
             walkTree(value, (node) => {
                 if (node.type !== "CallExpression") return;
                 const name = getHookNameFromCall(node);
-                if (!name) return;
-                if (!isGlobalStateHook(name, globalStateHooks)) return;
+                if (!name || !isUsePrefixHookName(name)) return;
+                if (isGlobalStateHook(name, globalStateHooks)) return;
 
                 context.report({
                     node: node.callee,
-                    messageId: "globalHook",
+                    messageId: "disallowedHook",
                     data: { name },
                 });
             });
         }
 
         return {
-            MethodDefinition: checkUseHooksMember,
-            PropertyDefinition: checkUseHooksMember,
+            MethodDefinition: checkUseGlobalMember,
+            PropertyDefinition: checkUseGlobalMember,
         };
     },
 });

@@ -1,4 +1,5 @@
 import { ESLintUtils } from "@typescript-eslint/utils";
+import type { TSESTree } from "@typescript-eslint/utils";
 import {
     getMemberKeyName,
     getModuleComponentContext,
@@ -11,6 +12,8 @@ const createRule = ESLintUtils.RuleCreator(
     (name) =>
         `https://github.com/untitle/jsproject/blob/main/front-harness/docs.md#module-${name}`,
 );
+
+type ClassMember = TSESTree.MethodDefinition | TSESTree.PropertyDefinition;
 
 export const utilsNoHooksRule = createRule({
     name: "utils-no-hooks",
@@ -33,10 +36,7 @@ export const utilsNoHooksRule = createRule({
 
         const { moduleClass } = moduleContext;
 
-        /**
-         * @param {import('@typescript-eslint/types').TSESTree.MethodDefinition | import('@typescript-eslint/types').TSESTree.PropertyDefinition} member
-         */
-        function checkUtilsMember(member) {
+        function checkUtilsMember(member: ClassMember) {
             if (!isMemberOfClass(member, moduleClass)) return;
             if (getMemberKeyName(member) !== "utils") return;
 

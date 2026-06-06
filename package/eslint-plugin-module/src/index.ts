@@ -5,7 +5,6 @@ import { useGlobalHooksOnlyRule } from "./rules/use-global-hooks-only.js";
 import { useHooksNoGlobalHooksRule } from "./rules/use-hooks-no-global-hooks.js";
 import { utilsNoHooksRule } from "./rules/utils-no-hooks.js";
 
-/** @type {import('eslint').ESLint.Plugin} */
 const plugin = {
     meta: {
         name: "@layer-harness/eslint-plugin-module",

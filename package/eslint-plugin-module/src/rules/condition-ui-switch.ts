@@ -1,4 +1,5 @@
 import { ESLintUtils } from "@typescript-eslint/utils";
+import type { TSESTree } from "@typescript-eslint/utils";
 import {
     getConditionModeModuleContext,
     getMemberKeyName,
@@ -10,33 +11,22 @@ const createRule = ESLintUtils.RuleCreator(
         `https://github.com/untitle/jsproject/blob/main/front-harness/docs.md#module-${name}`,
 );
 
-/**
- * @param {import('@typescript-eslint/types').TSESTree.ReturnStatement} node
- * @returns {boolean}
- */
-function isAllowedCaseReturn(node) {
-    if (node.type !== "ReturnStatement") return false;
+type ClassMember = TSESTree.MethodDefinition | TSESTree.PropertyDefinition;
+
+function isAllowedCaseReturn(node: TSESTree.ReturnStatement): boolean {
     const { argument } = node;
     if (argument === null) return true;
     if (argument.type === "Literal" && argument.value === null) return true;
     return argument.type === "JSXElement" || argument.type === "JSXFragment";
 }
 
-/**
- * @param {import('@typescript-eslint/types').TSESTree.Statement[]} statements
- * @returns {boolean}
- */
-function validateCaseConsequent(statements) {
+function validateCaseConsequent(statements: TSESTree.Statement[]): boolean {
     if (statements.length !== 1) return false;
-    return isAllowedCaseReturn(statements[0]);
+    const [stmt] = statements;
+    return stmt.type === "ReturnStatement" && isAllowedCaseReturn(stmt);
 }
 
-/**
- * @param {import('@typescript-eslint/types').TSESTree.SwitchCase[]} cases
- * @returns {boolean}
- */
-function validateSwitchCases(cases) {
-    /** @type {boolean} */
+function validateSwitchCases(cases: TSESTree.SwitchCase[]): boolean {
     let pendingFallThrough = false;
 
     for (const switchCase of cases) {
@@ -55,11 +45,9 @@ function validateSwitchCases(cases) {
     return !pendingFallThrough;
 }
 
-/**
- * @param {import('@typescript-eslint/types').TSESTree.BlockStatement | import('@typescript-eslint/types').TSESTree.Expression} body
- * @returns {boolean}
- */
-function isValidConditionUIBody(body) {
+function isValidConditionUIBody(
+    body: TSESTree.BlockStatement | TSESTree.Expression,
+): boolean {
     if (body.type !== "BlockStatement") return false;
 
     const { body: statements } = body;
@@ -98,10 +86,7 @@ export const conditionUiSwitchRule = createRule({
 
         const { moduleClass } = moduleContext;
 
-        /**
-         * @param {import('@typescript-eslint/types').TSESTree.MethodDefinition | import('@typescript-eslint/types').TSESTree.PropertyDefinition} member
-         */
-        function checkConditionUIMember(member) {
+        function checkConditionUIMember(member: ClassMember) {
             if (!isMemberOfClass(member, moduleClass)) return;
             if (getMemberKeyName(member) !== "ConditionUI") return;
 

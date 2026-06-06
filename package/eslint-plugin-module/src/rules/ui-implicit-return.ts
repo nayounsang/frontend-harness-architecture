@@ -1,4 +1,5 @@
 import { ESLintUtils } from "@typescript-eslint/utils";
+import type { TSESTree } from "@typescript-eslint/utils";
 import {
     getMemberKeyName,
     getUIModeModuleContext,
@@ -9,6 +10,8 @@ const createRule = ESLintUtils.RuleCreator(
     (name) =>
         `https://github.com/untitle/jsproject/blob/main/front-harness/docs.md#module-${name}`,
 );
+
+type ClassMember = TSESTree.MethodDefinition | TSESTree.PropertyDefinition;
 
 export const uiImplicitReturnRule = createRule({
     name: "ui-implicit-return",
@@ -31,10 +34,7 @@ export const uiImplicitReturnRule = createRule({
 
         const { moduleClass } = moduleContext;
 
-        /**
-         * @param {import('@typescript-eslint/types').TSESTree.MethodDefinition | import('@typescript-eslint/types').TSESTree.PropertyDefinition} member
-         */
-        function checkUIMember(member) {
+        function checkUIMember(member: ClassMember) {
             if (!isMemberOfClass(member, moduleClass)) return;
             if (getMemberKeyName(member) !== "UI") return;
 

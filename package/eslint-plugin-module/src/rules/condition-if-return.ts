@@ -1,4 +1,5 @@
 import { ESLintUtils } from "@typescript-eslint/utils";
+import type { TSESTree } from "@typescript-eslint/utils";
 import {
     getConditionModeModuleContext,
     getMemberKeyName,
@@ -10,11 +11,11 @@ const createRule = ESLintUtils.RuleCreator(
         `https://github.com/untitle/jsproject/blob/main/front-harness/docs.md#module-${name}`,
 );
 
-/**
- * @param {import('@typescript-eslint/types').TSESTree.Statement | import('@typescript-eslint/types').TSESTree.BlockStatement} node
- * @returns {import('@typescript-eslint/types').TSESTree.ReturnStatement | null}
- */
-function getReturnFromConsequent(node) {
+type ClassMember = TSESTree.MethodDefinition | TSESTree.PropertyDefinition;
+
+function getReturnFromConsequent(
+    node: TSESTree.Statement | TSESTree.BlockStatement,
+): TSESTree.ReturnStatement | null {
     if (node.type === "ReturnStatement") return node;
     if (node.type === "BlockStatement" && node.body.length === 1) {
         const [stmt] = node.body;
@@ -23,25 +24,15 @@ function getReturnFromConsequent(node) {
     return null;
 }
 
-/**
- * @param {import('@typescript-eslint/types').TSESTree.ReturnStatement | null} node
- * @returns {boolean}
- */
-function isStringLiteralReturn(node) {
+function isStringLiteralReturn(
+    node: TSESTree.ReturnStatement | null,
+): boolean {
     if (!node || node.type !== "ReturnStatement") return false;
     const { argument } = node;
-    return (
-        argument?.type === "Literal" &&
-        typeof argument.value === "string" &&
-        !argument.regex
-    );
+    return argument?.type === "Literal" && typeof argument.value === "string";
 }
 
-/**
- * @param {import('@typescript-eslint/types').TSESTree.IfStatement} ifStmt
- * @returns {boolean}
- */
-function validateIfElseChain(ifStmt) {
+function validateIfElseChain(ifStmt: TSESTree.IfStatement): boolean {
     const branchReturn = getReturnFromConsequent(ifStmt.consequent);
     if (!isStringLiteralReturn(branchReturn)) return false;
 
@@ -55,11 +46,9 @@ function validateIfElseChain(ifStmt) {
     return isStringLiteralReturn(getReturnFromConsequent(alternate));
 }
 
-/**
- * @param {import('@typescript-eslint/types').TSESTree.BlockStatement | import('@typescript-eslint/types').TSESTree.Expression} body
- * @returns {boolean}
- */
-function isValidConditionBody(body) {
+function isValidConditionBody(
+    body: TSESTree.BlockStatement | TSESTree.Expression,
+): boolean {
     if (body.type !== "BlockStatement") return false;
 
     const { body: statements } = body;
@@ -91,10 +80,7 @@ export const conditionIfReturnRule = createRule({
 
         const { moduleClass } = moduleContext;
 
-        /**
-         * @param {import('@typescript-eslint/types').TSESTree.MethodDefinition | import('@typescript-eslint/types').TSESTree.PropertyDefinition} member
-         */
-        function checkConditionMember(member) {
+        function checkConditionMember(member: ClassMember) {
             if (!isMemberOfClass(member, moduleClass)) return;
             if (getMemberKeyName(member) !== "condition") return;
 
