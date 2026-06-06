@@ -50,43 +50,41 @@ class CategoryTabsModule extends UIModeModule<
         };
     }
 
-    UI(utils: TabsUtils) {
-        return (
-            <nav
-                role="tablist"
-                style={{
-                    display: "flex",
-                    gap: 8,
-                    padding: "8px 0 16px",
-                    borderBottom: "1px solid #eee",
-                    marginBottom: 16,
-                }}
-            >
-                {utils.tabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        type="button"
-                        role="tab"
-                        aria-selected={tab.active}
-                        onClick={tab.onSelect}
-                        style={{
-                            padding: "8px 14px",
-                            borderRadius: 999,
-                            border: tab.active
-                                ? "1px solid #111"
-                                : "1px solid #ccc",
-                            background: tab.active ? "#111" : "#fff",
-                            color: tab.active ? "#fff" : "#111",
-                            cursor: "pointer",
-                            fontWeight: tab.active ? 600 : 500,
-                        }}
-                    >
-                        {tab.label}
-                    </button>
-                ))}
-            </nav>
-        );
-    }
+    UI = (utils: TabsUtils) => (
+        <nav
+            role="tablist"
+            style={{
+                display: "flex",
+                gap: 8,
+                padding: "8px 0 16px",
+                borderBottom: "1px solid #eee",
+                marginBottom: 16,
+            }}
+        >
+            {utils.tabs.map((tab) => (
+                <button
+                    key={tab.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={tab.active}
+                    onClick={tab.onSelect}
+                    style={{
+                        padding: "8px 14px",
+                        borderRadius: 999,
+                        border: tab.active
+                            ? "1px solid #111"
+                            : "1px solid #ccc",
+                        background: tab.active ? "#111" : "#fff",
+                        color: tab.active ? "#fff" : "#111",
+                        cursor: "pointer",
+                        fontWeight: tab.active ? 600 : 500,
+                    }}
+                >
+                    {tab.label}
+                </button>
+            ))}
+        </nav>
+    );
 }
 
 const CategoryTabs = createModuleComponent(new CategoryTabsModule());

@@ -141,7 +141,6 @@ class MenuDetailModule extends ConditionModeModule<
             case "none":
                 return null;
             case "cocktail":
-                if (utils.kind !== "cocktail") return null;
                 return (
                     <div
                         role="presentation"
@@ -193,12 +192,11 @@ class MenuDetailModule extends ConditionModeModule<
                                     닫기
                                 </button>
                             </div>
-                            <CocktailDetail item={utils.item} />
+                            <CocktailDetail item={(utils as CocktailDetailUtils).item} />
                         </div>
                     </div>
                 );
             case "whisky":
-                if (utils.kind !== "whisky") return null;
                 return (
                     <div
                         role="presentation"
@@ -250,12 +248,11 @@ class MenuDetailModule extends ConditionModeModule<
                                     닫기
                                 </button>
                             </div>
-                            <WhiskyDetail item={utils.item} />
+                            <WhiskyDetail item={(utils as WhiskyDetailUtils).item} />
                         </div>
                     </div>
                 );
             case "wine":
-                if (utils.kind !== "wine") return null;
                 return (
                     <div
                         role="presentation"
@@ -307,7 +304,7 @@ class MenuDetailModule extends ConditionModeModule<
                                     닫기
                                 </button>
                             </div>
-                            <WineDetail item={utils.item} />
+                            <WineDetail item={(utils as WineDetailUtils).item} />
                         </div>
                     </div>
                 );

@@ -94,21 +94,18 @@ class MenuListModule extends ConditionModeModule<
     }
 
     condition(utils: MenuListUtils): "cocktail" | "whisky" | "wine" {
-        if (utils.kind === "cocktail") return "cocktail";
-        else if (utils.kind === "whisky") return "whisky";
-        else return "wine";
+        return utils.kind;
     }
 
     ConditionUI(utils: MenuListUtils, condition: "cocktail" | "whisky" | "wine"): ReactNode {
         switch (condition) {
             case "cocktail":
-                if (utils.kind !== "cocktail") return null;
                 return (
                     <section aria-label="칵테일 메뉴 목록">
                         <h2 style={{ fontSize: 18, margin: "0 0 12px" }}>
                             {utils.title}
                         </h2>
-                        {utils.items.map((item) => (
+                        {(utils as CocktailListUtils).items.map((item) => (
                             <CocktailRow
                                 key={item.id}
                                 item={item}
@@ -118,13 +115,12 @@ class MenuListModule extends ConditionModeModule<
                     </section>
                 );
             case "whisky":
-                if (utils.kind !== "whisky") return null;
                 return (
                     <section aria-label="위스키 메뉴 목록">
                         <h2 style={{ fontSize: 18, margin: "0 0 12px" }}>
                             {utils.title}
                         </h2>
-                        {utils.items.map((item) => (
+                        {(utils as WhiskyListUtils).items.map((item) => (
                             <WhiskyRow
                                 key={item.id}
                                 item={item}
@@ -134,13 +130,12 @@ class MenuListModule extends ConditionModeModule<
                     </section>
                 );
             case "wine":
-                if (utils.kind !== "wine") return null;
                 return (
                     <section aria-label="와인 메뉴 목록">
                         <h2 style={{ fontSize: 18, margin: "0 0 12px" }}>
                             {utils.title}
                         </h2>
-                        {utils.items.map((item) => (
+                        {(utils as WineListUtils).items.map((item) => (
                             <WineRow
                                 key={item.id}
                                 item={item}
